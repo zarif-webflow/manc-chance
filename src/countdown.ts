@@ -75,6 +75,65 @@ const initCountdown = () => {
       parent: countdownWrap,
       log: "debug",
     });
+
+    const triggerOpen = () => {
+      if (!closedContent) return;
+
+      if (openContent) openContent.classList.remove("is-hidden");
+      if (closedContent) closedContent.classList.add("is-hidden");
+    };
+    const triggerClosed = () => {
+      if (!closedContent) return;
+
+      if (openContent) openContent.classList.add("is-hidden");
+      if (closedContent) closedContent.classList.remove("is-hidden");
+    };
+
+    const updateCountdown = () => {
+      const now = new Date().getTime();
+      const distance = targetDate!.getTime() - now;
+
+      // If countdown is finished
+      if (distance < 0) {
+        daysEl.textContent = "0";
+        hoursEl.textContent = "0";
+        minutesEl.textContent = "0";
+        secondsEl.textContent = "0";
+
+        triggerClosed();
+
+        return true; // Countdown finished
+      }
+
+      // Calculate time units
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      // Update display
+      daysEl.textContent = String(days);
+      hoursEl.textContent = String(hours);
+      minutesEl.textContent = String(minutes);
+      secondsEl.textContent = String(seconds);
+
+      triggerOpen();
+
+      return false; // Countdown still running
+    };
+
+    // Initial update
+    const isFinished = updateCountdown();
+
+    // Set interval to update every second if not finished
+    if (!isFinished) {
+      const intervalId = setInterval(() => {
+        const finished = updateCountdown();
+        if (finished) {
+          clearInterval(intervalId);
+        }
+      }, 1000);
+    }
   }
 };
 
