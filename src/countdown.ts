@@ -33,6 +33,10 @@ const initCountdown = () => {
 
     try {
       targetDate = new Date(targetTime);
+
+      if (isNaN(targetDate.getTime())) {
+        throw new Error();
+      }
     } catch {
       console.error("Invalid target time was inserted!", countdownWrap);
       continue;
